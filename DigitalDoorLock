@@ -1,0 +1,163 @@
+import javafx.application.Application;
+import javafx.geometry.*;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+import javafx.stage.Stage;
+import javafx.scene.control.Button;
+
+/**
+ * File: DigitalDoorLock.java
+ * Author: Sam Lewis
+ * Description: Use JavaFX to create a Java GUI application that uses (and possibly extends) the custom KeyPadPane class
+ **/
+public class DigitalDoorLock extends Application {
+
+    private final String CORRECT_PIN = "1234";
+    private TextField pinField;
+    private Label statusLabel;
+    private StringBuilder enteredPIN = new StringBuilder();
+
+    @Override
+    public void start(Stage primaryStage) {
+        BorderPane root = new BorderPane();
+        root.setPadding(new Insets(20));
+        root.setStyle("-fx-background-color: linear-gradient(to bottom, #e0e0e0, #b0b0b0);");
+
+        // lock
+        ImageView lockImage = new ImageView(new Image(
+            "https://share.google/images/TfAnLLXhcgvn1hOS0"
+        ));
+        lockImage.setFitHeight(130);
+        lockImage.setPreserveRatio(true);
+
+        //display
+        statusLabel = new Label("ENTER PIN TO UNLOCK");
+        statusLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;");
+
+        pinField = new TextField();
+        pinField.setEditable(false);
+        pinField.setAlignment(Pos.CENTER);
+        pinField.setStyle(
+            "-fx-font-size: 22px; " +
+            "-fx-font-family: 'Consolas'; " +
+            "-fx-background-color: black; " +
+            "-fx-text-fill: lime; " +
+            "-fx-background-radius: 6px;"
+        );
+        pinField.setPrefWidth(180);
+
+        VBox topBox = new VBox(12, lockImage, statusLabel, pinField);
+        topBox.setAlignment(Pos.CENTER);
+        topBox.setPadding(new Insets(10, 0, 20, 0));
+        root.setTop(topBox);
+
+        //keypad
+        GridPane keypad = createStyledKeypad();
+        BorderPane.setAlignment(keypad, Pos.CENTER);
+        root.setCenter(keypad);
+
+        //scene
+        Scene scene = new Scene(root, 350, 520);
+        primaryStage.setTitle("Digital Door Lock");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+     //create and style a keypad using KeyPadPane.
+    private GridPane createStyledKeypad() {
+        KeyPadPane keyPadPane = new KeyPadPane();
+
+        keyPadPane.setAlignment(Pos.CENTER);
+        keyPadPane.setHgap(10);
+        keyPadPane.setVgap(10);
+        keyPadPane.setPadding(new Insets(15));
+        keyPadPane.setStyle(
+            "-fx-background-color: #2e2e2e; " +
+            "-fx-background-radius: 10px; " +
+            "-fx-padding: 15px; " +
+            "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 4);"
+        );
+
+        //customize buttons
+        for (Button btn : keyPadPane.listButtons) {
+            btn.setPrefSize(80, 60);
+            btn.setStyle(
+                "-fx-background-color: #444; " +
+                "-fx-text-fill: white; " +
+                "-fx-font-size: 18px; " +
+                "-fx-background-radius: 6px;"
+            );
+            btn.setOnAction(e -> handleKeyPress(btn.getText()));
+        }
+
+        //enter and clear buttons
+        Button enterBtn = new Button("Enter");
+        Button clearBtn = new Button("Clear");
+
+        enterBtn.setPrefSize(80, 60);
+        clearBtn.setPrefSize(80, 60);
+
+        enterBtn.setStyle(
+            "-fx-background-color: #4CAF50; " +
+            "-fx-text-fill: white; " +
+            "-fx-font-size: 16px; " +
+            "-fx-font-weight: bold; " +
+            "-fx-background-radius: 6px;"
+        );
+        clearBtn.setStyle(
+            "-fx-background-color: #d32f2f; " +
+            "-fx-text-fill: white; " +
+            "-fx-font-size: 16px; " +
+            "-fx-font-weight: bold; " +
+            "-fx-background-radius: 6px;"
+        );
+
+        keyPadPane.add(clearBtn, 0, 4);
+        keyPadPane.add(enterBtn, 2, 4);
+        GridPane.setHalignment(clearBtn, HPos.CENTER);
+        GridPane.setHalignment(enterBtn, HPos.CENTER);
+
+        clearBtn.setOnAction(e -> clearDisplay());
+        enterBtn.setOnAction(e -> checkPIN());
+
+        return keyPadPane;
+    }
+
+     //handle press
+    private void handleKeyPress(String value) {
+        if (value.trim().isEmpty()) return;
+
+        if (enteredPIN.length() < 4) {
+            enteredPIN.append(value);
+            pinField.setText("*".repeat(enteredPIN.length()));
+        }
+    }
+
+     //clear entered PIN.
+    private void clearDisplay() {
+        enteredPIN.setLength(0);
+        pinField.clear();
+        statusLabel.setText("ENTER PIN TO UNLOCK");
+        statusLabel.setStyle("-fx-text-fill: #333;");
+    }
+
+     //check if entered PIN matches
+    private void checkPIN() {
+        if (enteredPIN.toString().equals(CORRECT_PIN)) {
+            statusLabel.setText("ACCESS GRANTED");
+            statusLabel.setStyle("-fx-text-fill: green; -fx-font-weight: bold;");
+        } else {
+            statusLabel.setText("ACCESS DENIED");
+            statusLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+        }
+        enteredPIN.setLength(0);
+        pinField.clear();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
