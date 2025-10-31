@@ -7,6 +7,3 @@ Description: Use JavaFX to create a Java GUI application that uses (and possibly
 
 Link to my completed tutorial:
 https://github.com/sl18424-prog/hello-world
-
-Link to project incase of issues:
-https://haunted-ghost-97ggrgrrq5wrf95w9.github.dev/
