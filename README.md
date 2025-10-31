@@ -9,5 +9,4 @@ Link to my completed tutorial:
 https://github.com/sl18424-prog/hello-world
 
 Link to project incase of issues:
-Link to project:
 https://haunted-ghost-97ggrgrrq5wrf95w9.github.dev/
